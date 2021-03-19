@@ -17,6 +17,13 @@ import 'comment_widget.dart';
 import 'black_background_image.dart';
 import 'post_detail.dart';
 import 'package:facebook_app/ultils/string_ext.dart';
+import 'package:meta/meta.dart';
+import 'dart:ui' as ui;
+import 'package:flutter/gestures.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart' as intl;
+
 
 class PostWidget extends StatelessWidget {
   final Post post;
@@ -39,151 +46,157 @@ class PostWidget extends StatelessWidget {
             height: 11.0,
           ),
           Container(
-            padding: EdgeInsets.all(15),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: <Widget>[
-                    GestureDetector(
-                      onTap: () {
-                        if (post.owner.id == UserRepositoryImpl.currentUser.id) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => ProfileMe()),
-                          );
-                        } else {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ProfileFriend(post.owner)),
-                          );
-                        }
-                      },
-                      child: CircleAvatar(
-                        backgroundImage: NetworkImage(post.owner.avatar),
-                        radius: 20.0,
-                      ),
-                    ),
-                    SizedBox(width: 7.0),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        GestureDetector(
-                          onTap: () {
-                            if (post.owner.id ==
-                                UserRepositoryImpl.currentUser.id) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ProfileMe()),
-                              );
-                            } else {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        ProfileFriend(post.owner)),
-                              );
-                            }
-                          },
-                          child: Row(
-                            children: [
-                              Text(
-                                  post.owner.firstName + ' ' + post.owner.lastName,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold, fontSize: 17.0)),
-                              SizedBox(
-                                width: 5.0,
-                              ),
-                              Icon(
-                                Icons.check_circle,
-                                size: 15,
-                                color: Colors.blueAccent,
-                              )
-                            ],
-                          ),
+              padding: EdgeInsets.all(15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: <Widget>[
+                      GestureDetector(
+                        onTap: () {
+                          if (post.owner.id == UserRepositoryImpl.currentUser.id) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => ProfileMe()),
+                            );
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ProfileFriend(post.owner)),
+                            );
+                          }
+                        },
+                        child: CircleAvatar(
+                          backgroundImage: NetworkImage(post.owner.avatar),
+                          radius: 20.0,
                         ),
-                        SizedBox(height: 5.0),
-                        Text(fix(post.modified))
-                      ],
-                    ),
-                  ],
-                ),
-                buildMenu(context),
-              ],
-            )
+                      ),
+                      SizedBox(width: 7.0),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          GestureDetector(
+                            onTap: () {
+                              if (post.owner.id ==
+                                  UserRepositoryImpl.currentUser.id) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ProfileMe()),
+                                );
+                              } else {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          ProfileFriend(post.owner)),
+                                );
+                              }
+                            },
+                            child: Row(
+                              children: [
+                                Text(
+                                    post.owner.firstName + ' ' + post.owner.lastName,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold, fontSize: 17.0)),
+                                SizedBox(
+                                  width: 5.0,
+                                ),
+                                Icon(
+                                  Icons.check_circle,
+                                  size: 15,
+                                  color: Colors.blueAccent,
+                                )
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 5.0),
+                          Text(fix(post.modified))
+                        ],
+                      ),
+                    ],
+                  ),
+                  buildMenu(context),
+                ],
+              )
           ),
           SizedBox(height: 5.0),
           GestureDetector(
-              onTap: () {
-                showMaterialModalBottomSheet(
-                    context: context,
-                    builder: (context) => CreateCommentWidget(
-                          provide: provide,
-                          post: post,
-                        ));
-              },
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                child: Container(
-                    alignment: Alignment.centerLeft,
-                    child: Linkify(
-                      onOpen: (link) async {
-                        if (await canLaunch(link.url)) {
-                          await launch(link.url);
-                        } else {
-                          throw 'Could not launch $link';
-                        }
-                      },
-                      text:post.described.getMyText(),
-                      //textAlign: TextAlign.left,
-                      linkStyle: TextStyle( fontSize: 15.0,color: Colors.black),
-                    ),
-                        //Text(post.described.getMyText(), style: TextStyle(fontSize: 15.0)
-                        )),
-              ),
+            // onTap: () {
+            //   showMaterialModalBottomSheet(
+            //       context: context,
+            //       builder: (context) => CreateCommentWidget(
+            //             provide: provide,
+            //             post: post,
+            //           ));
+            // },
+            child: ExpandableText(
+              post.described.getMyText(),
+              trimLines: 2,
+            ),
+
+            // child: Padding(
+            //   padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+            //   child: Container(
+            //       alignment: Alignment.centerLeft,
+            //       child: Linkify(
+            //         onOpen: (link) async {
+            //           if (await canLaunch(link.url)) {
+            //             await launch(link.url);
+            //           } else {
+            //             throw 'Could not launch $link';
+            //           }
+            //         },
+            //         text:post.described.getMyText(),
+            //         //textAlign: TextAlign.left,
+            //         linkStyle: TextStyle( fontSize: 15.0,color: Colors.black),
+            //       ),
+            //           //Text(post.described.getMyText(), style: TextStyle(fontSize: 15.0)
+            //           )
+            // ),
+          ),
           SizedBox(height: 10.0),
           buildImages(context),
           buildVideos(context),
           SizedBox(height: 10.0),
-          Container(
-            padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Icon(FontAwesomeIcons.thumbsUp,
-                        size: 12.0, color: Colors.blue),
-                    Text(' ${post.likes.length}'),
-                  ],
-                ),
-                Row(
-                  children: <Widget>[
-                    GestureDetector(
-                      onTap: () {
-                        showMaterialModalBottomSheet(
-                          context: context,
-                          backgroundColor: Colors.transparent,
-                          builder: (context) => CreateCommentWidget(
-                            provide: provide,
-                            post: post,
-                          ),
-                        );
-                      },
-                      child: Text('${post.comments.length} comments'),
-                    ),
-
-                    // Text('${post.shares} shares'), // so luong share
-                  ],
-                ),
-              ],
-            ),
-          ),
+          // Container(
+          //   padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //     children: <Widget>[
+          //       Row(
+          //         children: <Widget>[
+          //           Icon(FontAwesomeIcons.thumbsUp,
+          //               size: 12.0, color: Colors.blue),
+          //           Text(' ${post.likes.length}'),
+          //         ],
+          //       ),
+          //       Row(
+          //         children: <Widget>[
+          //           GestureDetector(
+          //             onTap: () {
+          //               showMaterialModalBottomSheet(
+          //                 context: context,
+          //                 backgroundColor: Colors.transparent,
+          //                 builder: (context) => CreateCommentWidget(
+          //                   provide: provide,
+          //                   post: post,
+          //                 ),
+          //               );
+          //             },
+          //             child: Text('${post.comments.length} comments'),
+          //           ),
+          //
+          //           // Text('${post.shares} shares'), // so luong share
+          //         ],
+          //       ),
+          //     ],
+          //   ),
+          // ),
           Divider(height: 20.0),
-          buildBottom(context, post),
+          // buildBottom(context, post),
         ],
       ),
     );
@@ -273,109 +286,109 @@ class PostWidget extends StatelessWidget {
     }
   }
 
-  buildBottom(BuildContext context, Post post) {
-    if (provide.checkFriend(post.owner.id))
-      return buildBottomLikeFriend(context);
-    return buildBottomLikeNoFriend(context);
-  }
+  // buildBottom(BuildContext context, Post post) {
+  //   if (provide.checkFriend(post.owner.id))
+  //     return buildBottomLikeFriend(context);
+  //   return buildBottomLikeNoFriend(context);
+  // }
 
-  buildBottomLikeFriend(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          FlatButton(
-            onPressed: () => {provide.updateLike(post)},
-            child: Row(
-              // Replace with a Row for horizontal icon + text
-              children: <Widget>[
-                Icon(FontAwesomeIcons.thumbsUp,
-                    size: 20.0,
-                    color: !post.isLiked ? Colors.grey : Colors.blue),
-                SizedBox(width: 5.0),
-                Text(
-                  'Like',
-                  style: TextStyle(
-                      fontSize: 14,
-                      color: !post.isLiked ? Colors.grey : Colors.blue),
-                )
-              ],
-            ),
-          ),
-          FlatButton(
-            onPressed: () => {
-              showMaterialModalBottomSheet(
-                context: context,
-                backgroundColor: Colors.transparent,
-                builder: (context) => CreateCommentWidget(
-                  provide: provide,
-                  post: post,
-                ),
-              )
-            },
-            child: Row(
-              // Replace with a Row for horizontal icon + text
-              children: <Widget>[
-                Icon(FontAwesomeIcons.commentAlt,
-                    size: 20.0, color: Colors.grey),
-                SizedBox(width: 5.0),
-                Text('Comment',
-                    style: TextStyle(fontSize: 14.0, color: Colors.grey)),
-              ],
-            ),
-          ),
-          Row(
-            children: <Widget>[
-              Icon(FontAwesomeIcons.share, size: 15.0, color: Colors.grey),
-              SizedBox(width: 5.0),
-              Text('Share',
-                  style: TextStyle(fontSize: 14.0, color: Colors.grey)),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+  // buildBottomLikeFriend(BuildContext context) {
+  //   return Container(
+  //     padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //       crossAxisAlignment: CrossAxisAlignment.center,
+  //       children: <Widget>[
+  //         FlatButton(
+  //           onPressed: () => {provide.updateLike(post)},
+  //           Row
+  //             // Replace with a Row for horizontal icon + text
+  //             children: <Widget>[
+  //               Icon(FontAwesomeIcons.thumbsUp,
+  //                   size: 20.0,
+  //                   color: !post.isLiked ? Colors.grey : Colors.blue),
+  //               SizedBox(width: 5.0),
+  //               Text(
+  //                 'Like',
+  //                 style: TextStyle(
+  //                     fontSize: 14,
+  //                     color: !post.isLiked ? Colors.grey : Colors.blue),
+  //               )
+  //             ],
+  //           ),
+  //         ),
+  //         FlatButton(
+  //           onPressed: () => {
+  //             showMaterialModalBottomSheet(
+  //               context: context,
+  //               backgroundColor: Colors.transparent,
+  //               builder: (context) => CreateCommentWidget(
+  //                 provide: provide,
+  //                 post: post,
+  //               ),
+  //             )
+  //           },
+  //           child: Row(
+  //             // Replace with a Row for horizontal icon + text
+  //             children: <Widget>[
+  //               Icon(FontAwesomeIcons.commentAlt,
+  //                   size: 20.0, color: Colors.grey),
+  //               SizedBox(width: 5.0),
+  //               Text('Comment',
+  //                   style: TextStyle(fontSize: 14.0, color: Colors.grey)),
+  //             ],
+  //           ),
+  //         ),
+  //         Row(
+  //           children: <Widget>[
+  //             Icon(FontAwesomeIcons.share, size: 15.0, color: Colors.grey),
+  //             SizedBox(width: 5.0),
+  //             Text('Share',
+  //                 style: TextStyle(fontSize: 14.0, color: Colors.grey)),
+  //           ],
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  buildBottomLikeNoFriend(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          FlatButton(
-            onPressed: () => {provide.updateLike(post)},
-            child: Row(
-              // Replace with a Row for horizontal icon + text
-              children: <Widget>[
-                Icon(FontAwesomeIcons.thumbsUp,
-                    size: 20.0,
-                    color: !post.isLiked ? Colors.grey : Colors.blue),
-                SizedBox(width: 5.0),
-                Text(
-                  'Like',
-                  style: TextStyle(
-                      fontSize: 14,
-                      color: !post.isLiked ? Colors.grey : Colors.blue),
-                )
-              ],
-            ),
-          ),
-          Row(
-            children: <Widget>[
-              Icon(FontAwesomeIcons.share, size: 20.0, color: Colors.grey),
-              SizedBox(width: 5.0),
-              Text('Share',
-                  style: TextStyle(fontSize: 14.0, color: Colors.grey)),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+  // buildBottomLikeNoFriend(BuildContext context) {
+  //   return Container(
+  //     padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //       crossAxisAlignment: CrossAxisAlignment.center,
+  //       children: <Widget>[
+  //         FlatButton(
+  //           onPressed: () => {provide.updateLike(post)},
+  //           child: Row(
+  //             // Replace with a Row for horizontal icon + text
+  //             children: <Widget>[
+  //               Icon(FontAwesomeIcons.thumbsUp,
+  //                   size: 20.0,
+  //                   color: !post.isLiked ? Colors.grey : Colors.blue),
+  //               SizedBox(width: 5.0),
+  //               Text(
+  //                 'Like',
+  //                 style: TextStyle(
+  //                     fontSize: 14,
+  //                     color: !post.isLiked ? Colors.grey : Colors.blue),
+  //               )
+  //             ],
+  //           ),
+  //         ),
+  //         Row(
+  //           children: <Widget>[
+  //             Icon(FontAwesomeIcons.share, size: 20.0, color: Colors.grey),
+  //             SizedBox(width: 5.0),
+  //             Text('Share',
+  //                 style: TextStyle(fontSize: 14.0, color: Colors.grey)),
+  //           ],
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   String fix(String text1) {
     var now = (new DateTime.now()).millisecondsSinceEpoch;
@@ -440,16 +453,16 @@ class PostWidget extends StatelessWidget {
     );
   }
   Visibility buildMenu(BuildContext context){
-  return  Visibility(
-    visible: post.owner.id == UserRepositoryImpl.currentUser.id,
+    return  Visibility(
+      visible: post.owner.id == UserRepositoryImpl.currentUser.id,
       child: PopupMenuButton<String>(
         onSelected: (String value) {
           showMaterialModalBottomSheet(
             context: context,
             backgroundColor: Colors.transparent,
             builder: (context) => EditPostWidget(
-              provide: provide,
-              post: post
+                provide: provide,
+                post: post
             ),
           );
         },
@@ -461,5 +474,93 @@ class PostWidget extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class ExpandableText extends StatefulWidget {
+  const ExpandableText(
+      this.text, {
+        Key key,
+        this.trimLines = 2,
+      })  : assert(text != null),
+        super(key: key);
+
+  final String text;
+  final int trimLines;
+
+  @override
+  ExpandableTextState createState() => ExpandableTextState();
+}
+
+class ExpandableTextState extends State<ExpandableText> {
+  bool _readMore = true;
+  void _onTapLink() {
+    setState(() => _readMore = !_readMore);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final DefaultTextStyle defaultTextStyle = DefaultTextStyle.of(context);
+    final colorClickableText = Colors.blue;
+    final widgetColor = Colors.black;
+    TextSpan link = TextSpan(
+        text: _readMore ? "... read more" : " read less",
+        style: TextStyle(
+          color: colorClickableText,
+        ),
+        recognizer: TapGestureRecognizer()..onTap = _onTapLink
+    );
+    Widget result = LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        assert(constraints.hasBoundedWidth);
+        final double maxWidth = constraints.maxWidth;
+        // Create a TextSpan with data
+        final text = TextSpan(
+          text: widget.text,
+        );
+        // Layout and measure link
+        TextPainter textPainter = TextPainter(
+          text: link,
+          textDirection: ui.TextDirection.rtl,//better to pass this from master widget if ltr and rtl both supported
+          maxLines: widget.trimLines,
+          ellipsis: '...',
+        );
+        textPainter.layout(minWidth: constraints.minWidth, maxWidth: maxWidth);
+        final linkSize = textPainter.size;
+        // Layout and measure text
+        textPainter.text = text;
+        textPainter.layout(minWidth: constraints.minWidth, maxWidth: maxWidth);
+        final textSize = textPainter.size;
+        // Get the endIndex of data
+        int endIndex;
+        final pos = textPainter.getPositionForOffset(Offset(
+          textSize.width - linkSize.width,
+          textSize.height,
+        ));
+        endIndex = textPainter.getOffsetBefore(pos.offset);
+        var textSpan;
+        if (textPainter.didExceedMaxLines) {
+          textSpan = TextSpan(
+            text: _readMore
+                ? widget.text.substring(0, endIndex)
+                : widget.text,
+            style: TextStyle(
+              color: widgetColor,
+            ),
+            children: <TextSpan>[link],
+          );
+        } else {
+          textSpan = TextSpan(
+            text: widget.text,
+          );
+        }
+        return RichText(
+          softWrap: true,
+          overflow: TextOverflow.clip,
+          text: textSpan,
+        );
+      },
+    );
+    return result;
   }
 }
